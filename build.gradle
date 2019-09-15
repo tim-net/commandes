@@ -1,0 +1,156 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		jcenter()
+		maven { url "http://repo.spring.io/plugins-release" }
+		maven { url "http://repo.spring.io/milestone" }
+		maven { url "https://plugins.gradle.org/m2/" }
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath "gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:${querydsl_plugin_version}"
+		classpath "io.franzbecker:gradle-lombok:${gradle_lombok_version}"
+		classpath "org.springframework.build.gradle:propdeps-plugin:${propdeps_plugin_version}"
+		classpath "io.spring.gradle:dependency-management-plugin:${dependency_management_plugin_version}"
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'propdeps'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: "com.ewerk.gradle.plugins.querydsl"
+apply plugin: 'io.franzbecker.gradle-lombok'
+
+group = 'com.netisov.tim.commandes'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+	mavenCentral()
+	jcenter()
+	maven { url 'http://repo.spring.io/milestone' }
+	maven { url 'http://repo.spring.io/snapshot' }
+	maven { url 'http://repo.maven.apache.org/maven2' }
+}
+
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+
+	/** Database packages**/
+	compile "com.querydsl:querydsl-jpa:${querydsl_jpa_version}"
+	compile('org.liquibase:liquibase-core')
+	compile("com.h2database:h2:${h2database_version}")
+
+	/* Hibernate packages */
+	compile "org.hibernate:hibernate-core:${org_hibernate_version}"
+	compile "org.hibernate:hibernate-entitymanager:${org_hibernate_version}"
+
+	/* Commons packages */
+	compile "org.apache.commons:commons-lang3:${commons_lang_version}"
+	compile "javax.xml.bind:jaxb-api:${jaxb_version}"
+
+	/* Swagger packages */
+	compile "io.springfox:springfox-swagger2:${io_springfox_swagger_version}"
+	compile "io.springfox:springfox-swagger-ui:${io_springfox_swagger_version}"
+
+	/* Lombok */
+	compileOnly "org.projectlombok:lombok:${org_projectlombok_version}"
+	compileOnly "com.querydsl:querydsl-apt:${querydsl_jpa_version}"
+
+
+	/* Test packages */
+	testCompile "org.springframework.boot:spring-boot-starter-test"
+	testCompile "org.springframework.security:spring-security-test"
+	testCompile "junit:junit:${junit_version}"
+	testCompile "com.h2database:h2:${h2database_version}"
+	testCompile "org.mockito:mockito-core:${mockito_version}"
+	testCompile "org.dbunit:dbunit:${dbunit_version}"
+	testCompile "com.github.springtestdbunit:spring-test-dbunit:${spring_test_dbunit_version}"
+	testCompile "javax.xml.bind:jaxb-api:${jaxb_version}"
+}
+
+def webappDir = "$projectDir/src/main/webapp"
+
+def profile = 'default'
+
+if (project.hasProperty('dev')) {
+	profile = 'dev'
+}
+sourceSets {
+	main {
+		resources {
+			srcDirs = ["$webappDir/dist", "$projectDir/src/main/resources"]
+		}
+		java {
+			srcDir "$buildDir/generated/querydsl"
+		}
+	}
+}
+
+task buildAngular(type: Exec) {
+	// installAngular should be run prior to this task
+	dependsOn "installAngular"
+	workingDir "$webappDir"
+	inputs.dir "$webappDir"
+	// Add task to the standard build group
+	group = BasePlugin.BUILD_GROUP
+	def buildCmd = "build"
+
+	if (project.hasProperty('dev')) {
+		buildCmd = 'build-dev'
+	}
+	// ng doesn't exist as a file in windows -> npm.cmd run ng
+	if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
+		commandLine "npm.cmd", "run", buildCmd
+	} else {
+		commandLine "npm", "run", buildCmd
+	}
+}
+
+
+processResources {
+	dependsOn "buildAngular"
+	filesMatching('**/application.yml') {
+		filter {
+			it.replace('#spring.profiles.active#', profile)
+		}
+	}
+}
+
+bootRun {
+	args = ["--spring.profiles.active=" + profile]
+}
+
+processResources.mustRunAfter buildAngular
+
+
+task installAngular(type: Exec) {
+	workingDir "$webappDir"
+	inputs.dir "$webappDir"
+	group = BasePlugin.BUILD_GROUP
+	if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
+		commandLine "npm.cmd", "install"
+	} else {
+		commandLine "npm", "install"
+	}
+}
+
+lombok {
+	version = org_projectlombok_version
+}
+
+querydsl {
+	jpa = true
+	querydslSourcesDir = "$buildDir/generated/querydsl"
+}
+
+project.afterEvaluate {
+	project.tasks.compileQuerydsl.options.compilerArgs = [
+			"-proc:only",
+			"-processor", project.querydsl.processors() +
+					',lombok.launch.AnnotationProcessorHider$AnnotationProcessor'
+	]
+}

@@ -1,0 +1,15 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="41-load-default-article-families" author="Timofei Netisov">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM article_family</sqlCheck>
+        </preConditions>
+        <loadData tableName="article_family"
+                  file="article_families_default_data.csv"
+                  separator="|"
+                  relativeToChangelogFile="true">
+        </loadData>
+    </changeSet>
+</databaseChangeLog>

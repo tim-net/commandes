@@ -1,0 +1,25 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        generate_statistics: true
+        cache:
+          use_second_level_cache: false
+          use_query_cache: false
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2console
+
+
+# ===================================================================
+# Logback configuration
+# ===================================================================
+
+logging:
+  level:
+    com.netisov.tim.commandes: DEBUG
+server:
+  port: 80

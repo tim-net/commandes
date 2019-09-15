@@ -1,0 +1,9 @@
+$fa-font-path: '~font-awesome/fonts';
+$ag-mat-icons-path: "~ag-grid/src/styles/material-icons/";
+$ag-icons-path: "~ag-grid/src/styles/icons/";
+
+@import '~bootstrap/scss/bootstrap';
+
+@import '~ag-grid/src/styles/ag-grid';
+@import "~ag-grid/src/styles/ag-theme-material";
+

@@ -1,0 +1,7 @@
+code|label|status
+NV|Nouvelle|0
+VAL|Valide|0
+TRT|En cours de traitement|0
+TST|En transit|1
+RCP|Receptionnee|1
+ANL|Annulee|1

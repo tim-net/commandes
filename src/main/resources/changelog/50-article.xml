@@ -1,0 +1,28 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="1" author="Timofei Netisov">
+        <createTable tableName="article" remarks="Article'">
+            <column name="code" type="char(24)" remarks="Code d'article'">
+                <constraints primaryKey="true"
+                             primaryKeyName="pk_article"
+                             unique="true"
+                             nullable="false"/>
+            </column>
+            <column name="label" type="nvarchar(256)" remarks="Label">
+                <constraints nullable="false" />
+            </column>
+            <column name="price" type="currency" remarks="Price">
+                <constraints nullable="false" />
+            </column>
+            <column name="family_code" type="char(10)" remarks="Code de famille" >
+                <constraints nullable="false" />
+            </column>
+<!--Article doit etre versionne car il consist des proprietes qui peuvent changer (prix, libelle)-->
+        </createTable>
+        <createIndex tableName="article" indexName="ix_article_family">
+            <column name="family_code"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

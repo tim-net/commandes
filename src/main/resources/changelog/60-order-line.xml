@@ -1,0 +1,31 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="1" author="Timofei Netisov">
+        <createTable tableName="order_line" remarks="Article'">
+            <column autoIncrement="true" name="id" type="int" remarks="ID">
+                <constraints primaryKey="true"
+                             primaryKeyName="pk_order_line"
+                             nullable="false"/>
+            </column>
+            <column name="article_code" type="char(24)" remarks="Article">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="int" remarks="Quantite d'articles">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="currency" remarks="Prix total d'articles">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_id" type="int" remarks="Commande">
+                <constraints nullable="false" deleteCascade="true"/>
+            </column>
+        </createTable>
+        <!-- Si il y aura la necessite de chercher une ligne de commande par article on peut ajouter l'index par article_code       -->
+        <createIndex tableName="order_line" indexName="ix_order_line_order">
+            <column name="order_id"/>
+        </createIndex>
+
+    </changeSet>
+</databaseChangeLog>

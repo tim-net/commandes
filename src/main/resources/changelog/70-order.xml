@@ -1,0 +1,38 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="1" author="Timofei Netisov">
+        <createTable tableName="order" remarks="Order'">
+            <column autoIncrement="true" name="id" type="int" remarks="ID">
+                <constraints primaryKey="true"
+                             primaryKeyName="pk_order"
+                             nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="client_id" type="int">
+                <constraints nullable="false" deleteCascade="true"/>
+                <!--                Normallement au lieu de deleteCascade il faudra faire client et commande entites versionnees pour avoir l'histoire des modifications au cas ou le client est supprime-->
+            </column>
+
+            <column name="shipping_country_code" type="char(2)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="state_code" type="char(10)">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+        <createIndex tableName="order" indexName="ix_search_order">
+            <column name="created_at"/>
+            <column name="client_id"/>
+            <column name="shipping_country_code"/>
+            <column name="state_code"/>
+        </createIndex>
+        <!--Index a redefinir selon la statistique SQL dans prod-->
+    </changeSet>
+</databaseChangeLog>

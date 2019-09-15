@@ -1,0 +1,16 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="11-load_default_pays" author="Timofei Netisov">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM country</sqlCheck>
+        </preConditions>
+        <loadData tableName="pays"
+                  file="countries_default_data.csv"
+                  separator="|"
+                  relativeToChangelogFile="true"
+        >
+        </loadData>
+    </changeSet>
+</databaseChangeLog>
