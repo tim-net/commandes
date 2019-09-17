@@ -1,23 +1,24 @@
 package com.netisov.tim.commandes.domain;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Objects;
 
 @Entity
 @Table(name = "order_state")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Cacheable
 public class OrderState {
 
     @Id
+    @NotNull
     @Column(name="code")
     private String code;
 
@@ -28,5 +29,15 @@ public class OrderState {
 
     @Column(name = "outcome", nullable = false)
     private OrderOutcome outcome;
+
+    @Builder
+    public OrderState(String code, String label, OrderOutcome outcome) {
+        Objects.requireNonNull(code);
+        Objects.requireNonNull(label);
+        Objects.requireNonNull(outcome);
+        this.code = code;
+        this.label = label;
+        this.outcome = outcome;
+    }
 
 }

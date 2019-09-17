@@ -1,9 +1,8 @@
 package com.netisov.tim.commandes.dto.order;
 
-import com.netisov.tim.commandes.domain.OrderItem;
+import com.netisov.tim.commandes.domain.Order;
 import com.netisov.tim.commandes.dto.PagingAndSortingRequest;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import io.swagger.annotations.ApiModel;
@@ -17,13 +16,13 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import java.time.LocalDateTime;
 
-import static com.netisov.tim.commandes.domain.QOrderItem.orderItem;
+import static com.netisov.tim.commandes.domain.QOrder.order;
 
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @ApiModel(value = "Orders list filter", description = "A filter for a list of orders")
 @Getter
 @Setter
-public class OrderListFilter extends PagingAndSortingRequest<OrderItem> {
+public class OrderListFilter extends PagingAndSortingRequest<Order> {
     @ApiModelProperty(value = "Search string for id(number)", position = 10)
     public String id;
 
@@ -44,34 +43,34 @@ public class OrderListFilter extends PagingAndSortingRequest<OrderItem> {
     public Predicate predicate() {
         BooleanBuilder builder = new BooleanBuilder();
         if (NumberUtils.isParsable(id)) {
-            builder.and(orderItem.id.eq(Integer.parseInt(id)));
+            builder.and(order.id.eq(Long.parseLong(id)));
         }
         if (!StringUtils.isEmpty(stateCode)) {
-            builder.and(orderItem.state.code.eq(stateCode));
+            builder.and(order.state.code.eq(stateCode));
         }
         if (!StringUtils.isEmpty(clientName)) {
-            builder.and(orderItem.client.name.likeIgnoreCase("%" + clientName + "%"));
+            builder.and(order.client.name.likeIgnoreCase("%" + clientName + "%"));
         }
         if (fromCreatedAt != null) {
-            builder.and(orderItem.createdAt.goe(fromCreatedAt));
+            builder.and(order.createdAt.goe(fromCreatedAt));
         }
         if (toCreatedAt != null) {
-            builder.and(orderItem.createdAt.loe(toCreatedAt));
+            builder.and(order.createdAt.loe(toCreatedAt));
         }
         return builder;
     }
 
     @Override
-    protected OrderSpecifier<?> orderBy(Order order, String field) {
+    protected OrderSpecifier<?> orderBy(com.querydsl.core.types.Order orderBy, String field) {
         switch (field) {
             case "created":
-                return new OrderSpecifier<>(order, orderItem.createdAt);
+                return new OrderSpecifier<>(orderBy, order.createdAt);
             case "status":
-                return new OrderSpecifier<>(order, orderItem.state.label);
+                return new OrderSpecifier<>(orderBy, order.state.label);
             case "client":
-                return new OrderSpecifier<>(order, orderItem.client.name);
+                return new OrderSpecifier<>(orderBy, order.client.name);
             default:
-                return new OrderSpecifier<>(order, orderItem.id);
+                return new OrderSpecifier<>(orderBy, order.id);
         }
     }
 }

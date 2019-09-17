@@ -47,6 +47,7 @@ dependencies {
 	/* Hibernate packages */
 	compile "org.hibernate:hibernate-core:${org_hibernate_version}"
 	compile "org.hibernate:hibernate-entitymanager:${org_hibernate_version}"
+	compile "org.hibernate:hibernate-ehcache:${org_hibernate_version}"
 
 	/* Commons packages */
 	compile "org.apache.commons:commons-lang3:${commons_lang_version}"

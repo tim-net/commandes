@@ -17,11 +17,12 @@ public class OrderLine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
-    private Integer id;
+    private Long id;
 
     @QueryInit("*")
     @NotNull
     @ManyToOne
+    @Setter
     @JoinColumn(name = "article_code", referencedColumnName = "code")
     private Article article;
 
@@ -36,10 +37,10 @@ public class OrderLine {
     @NonNull
     @ManyToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
-    private OrderItem order;
+    private Order order;
 
     @Builder
-    public OrderLine(Article article, Integer amount, Double price, OrderItem order) {
+    public OrderLine(Article article, Integer amount, Double price, Order order) {
         Objects.requireNonNull(article);
         Objects.requireNonNull(amount);
         Objects.requireNonNull(price);
