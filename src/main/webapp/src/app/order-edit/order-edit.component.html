@@ -1,0 +1,35 @@
+<div class="container">
+  <form>
+    <div class="card">
+      <div class="card-body">
+        <h2 *ngIf="order?.id" class="card-title">{{order?.name}}</h2>
+        <h2 *ngIf="order?.id == null" class="card-title">Create an order</h2>
+        <div class="card-text">
+        <ul class="list-group list-group-flush">
+          <li *ngIf="order?.id" class="list-group-item">Number: {{order?.id}}</li>
+          <li *ngIf="order?.created" class="list-group-item">Created: {{order?.created | date }}</li>
+          <li *ngIf="order?.state" class="list-group-item">State: {{order?.state}}</li>
+        </ul>
+        </div>
+      </div>
+    </div>
+    <mat-form-field>
+      <mat-label>Client</mat-label>
+      <mat-select>
+        <mat-option *ngFor="let client of clients" [value]="order.client">
+          {{client.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Shipping country</mat-label>
+      <mat-select>
+        <mat-option *ngFor="let country of countries" [value]="order.shippingCountry">
+          {{country.label}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <h3>Price <span class="badge badge-secondary">{{order?.price}}</span></h3>
+
+  </form>
+</div>

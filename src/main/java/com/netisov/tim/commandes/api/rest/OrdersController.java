@@ -17,13 +17,14 @@ import org.springframework.web.bind.annotation.*;
 public class OrdersController {
 
     private final OrderService orderService;
-    private final OrderConverter orderConverter = new OrderConverter();
+    private final OrderConverter orderConverter;
     private final OrderListConverter orderListConverter = new OrderListConverter();
     private final OrderRepresentationConverter orderRepresentationConverter = new OrderRepresentationConverter();
     private final Logger log = LoggerFactory.getLogger(OrdersController.class);
 
-    public OrdersController(OrderService orderService) {
+    public OrdersController(OrderService orderService, OrderConverter orderConverter) {
         this.orderService = orderService;
+        this.orderConverter = orderConverter;
     }
 
     @GetMapping

@@ -7,3 +7,6 @@ $ag-icons-path: "~ag-grid/src/styles/icons/";
 @import '~ag-grid/src/styles/ag-grid';
 @import "~ag-grid/src/styles/ag-theme-material";
 
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
