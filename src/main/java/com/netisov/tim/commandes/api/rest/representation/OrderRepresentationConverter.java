@@ -10,6 +10,7 @@ public class OrderRepresentationConverter implements Function<OrderRepresentatio
     @Override
     public Order apply(OrderRepresentation orderRepresentation) {
         Order order = Optional.of(orderRepresentation).map(o -> Order.builder()
+                .id(orderRepresentation.getId())
                 .client(Client.builder()
                         .id(o.getClient().getId())
                         .code(o.getClient().getCode())
@@ -17,16 +18,13 @@ public class OrderRepresentationConverter implements Function<OrderRepresentatio
                 .shippingCountry(Country.builder()
                         .code(o.getShippingCountry().getCode())
                         .label(o.getShippingCountry().getLabel()).build())
-                .state(OrderState.builder()
-                        .code(o.getState().getCode())
-                        .label(o.getState().getLabel())
-                        .outcome(OrderOutcome.valueOf(o.getState().getOutcome())).build())
                 .price(o.getPrice())
                 .build()
         ).get();
         order.setOrderLines(orderRepresentation.getLines().stream().map(l -> OrderLine.builder()
                 .amount(l.getAmount())
                 .price(l.getPrice())
+                .order(order)
                 .article(Article.builder()
                         .code(l.getArticle().getCode())
                         .family(ArticleFamily.builder()

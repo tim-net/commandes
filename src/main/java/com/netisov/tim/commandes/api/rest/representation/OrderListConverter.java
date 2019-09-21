@@ -12,6 +12,8 @@ public class OrderListConverter implements Function<Order, OrderListRepresentati
                 .createdAt(order.getCreatedAt())
                 .state(order.getState().getLabel())
                 .client(order.getClient().getName())
+                .shippingCountry(order.getShippingCountry().getLabel())
+                .price(order.getPrice())
                 .build();
     }
 }

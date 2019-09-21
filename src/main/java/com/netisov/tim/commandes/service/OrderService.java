@@ -3,6 +3,7 @@ package com.netisov.tim.commandes.service;
 import com.netisov.tim.commandes.domain.Article;
 import com.netisov.tim.commandes.domain.Order;
 import com.netisov.tim.commandes.domain.OrderLine;
+import com.netisov.tim.commandes.domain.OrderState;
 import com.netisov.tim.commandes.dto.PagingAndSortingRequest;
 import com.netisov.tim.commandes.repository.ArticleRepository;
 import com.netisov.tim.commandes.repository.OrderRepository;
@@ -49,13 +50,13 @@ public class OrderService {
             double price = BigDecimal.valueOf(article.getPrice() * l.getAmount())
                     .setScale(2, RoundingMode.HALF_UP)
                     .doubleValue();
-            if (l.getPrice() != price) {
+            if (!l.getPrice().equals(price)) {
                 throw new IllegalArgumentException("Illegal value of price in the order line");
             }
             l.setArticle(article);
         });
         double total = order.getOrderLines().stream().mapToDouble(OrderLine::getPrice).sum();
-        if (order.getPrice() != total) {
+        if (!order.getPrice().equals(total)) {
             throw new IllegalArgumentException("Illegal value of price in the order");
         }
 

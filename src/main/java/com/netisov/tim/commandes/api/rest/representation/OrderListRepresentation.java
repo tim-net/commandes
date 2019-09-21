@@ -45,5 +45,8 @@ public class OrderListRepresentation {
 
         @ApiModelProperty(value = "Shipping country name", position = 40)
         private String shippingCountry;
+
+        @ApiModelProperty(value = "Price", position = 50)
+        private Double price;
     }
 }

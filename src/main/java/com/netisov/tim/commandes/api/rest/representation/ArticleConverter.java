@@ -11,6 +11,8 @@ public class ArticleConverter implements Function<Article, ArticleRepresentation
     public ArticleRepresentation apply(Article article) {
         return ArticleRepresentation.builder()
                 .code(article.getCode())
+                .label(article.getLabel())
+                .price(article.getPrice())
                 .family(ArticleFamilyRepresentation.builder()
                         .code(article.getFamily().getCode())
                         .label(article.getFamily().getLabel())

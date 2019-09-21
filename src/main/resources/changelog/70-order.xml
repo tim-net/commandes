@@ -3,8 +3,8 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <changeSet id="1" author="Timofei Netisov">
-        <createTable tableName="order" remarks="Order'">
-            <column autoIncrement="true" name="id" type="int" remarks="ID">
+        <createTable tableName="order_entity" remarks="Order'">
+            <column autoIncrement="true" name="id" type="bigint" remarks="ID">
                 <constraints primaryKey="true"
                              primaryKeyName="pk_order"
                              nullable="false"/>
@@ -31,7 +31,7 @@
             </column>
 
         </createTable>
-        <createIndex tableName="order" indexName="ix_search_order">
+        <createIndex tableName="order_entity" indexName="ix_search_order">
             <column name="created_at"/>
             <column name="client_id"/>
             <column name="shipping_country_code"/>

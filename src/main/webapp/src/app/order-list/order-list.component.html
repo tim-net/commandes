@@ -1,0 +1,42 @@
+<div class="container">
+
+  <order-list-filter (onClientChange)="onClientChange($event)"
+                     (onFromCreatedAtFilterChange)="onFromCreatedAtFilterChange($event)"
+                     (onStateCodeFilterChange)="onStateCodeFilterChange($event)"
+  ></order-list-filter>
+  <mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort matSortActive="createdAt"
+             matSortDirection="desc" matSortDisableClear>
+    <ng-container matColumnDef="id">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>#</mat-header-cell>
+      <mat-cell *matCellDef="let order">{{order.id}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="createdAt">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Cree</mat-header-cell>
+      <mat-cell *matCellDef="let order">{{order.createdAt | date: 'dd.MM.yyyy HH:mm'}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="client">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Nom du client</mat-header-cell>
+      <mat-cell *matCellDef="let order">{{order.client}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="shippingCountry">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Pays de livraison</mat-header-cell>
+      <mat-cell *matCellDef="let order">{{order.shippingCountry}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="state">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+      <mat-cell *matCellDef="let order">{{order.state}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="price">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Prix</mat-header-cell>
+      <mat-cell *matCellDef="let order">{{order.price}}</mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns" [routerLink]="['/order/edit']"></mat-row>
+
+  </mat-table>
+  <mat-paginator [length]="dataSource?.ordersCount" [pageSize]="filter.size" [pageIndex]="filter.page"
+                 [pageSizeOptions]="[3, 5, 10]"></mat-paginator>
+  <div class="row">
+    <button mat-fab color="primary" routerLink="/order/new">Cree une commande</button>
+  </div>
+</div>

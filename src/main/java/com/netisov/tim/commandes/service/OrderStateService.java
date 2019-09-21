@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,5 +26,10 @@ public class OrderStateService {
         if (nv.isPresent()) {
             return nv.get();
         } else throw new IllegalStateException("System error in finding an initial state for an order");
+    }
+
+
+    public List<OrderState> getStates(){
+        return repository.findAll();
     }
 }

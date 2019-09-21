@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -32,10 +33,12 @@ public class OrderListFilter extends PagingAndSortingRequest<Order> {
     @ApiModelProperty(value = "Search by client name", position = 30)
     public String clientName;
 
-    @ApiModelProperty(value = "Search by creation date(from)", position = 40)
+    @ApiModelProperty(value = "Search by creation date(from)", example = "2019-09-11 22-00-00", position = 40)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH-mm-ss")
     public LocalDateTime fromCreatedAt;
 
-    @ApiModelProperty(value = "Search by creation date(to)", position = 40)
+    @ApiModelProperty(value = "Search by creation date(to)", example = "2019-09-11 22-00-00", position = 50)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH-mm-ss")
     public LocalDateTime toCreatedAt;
 
 
@@ -65,10 +68,14 @@ public class OrderListFilter extends PagingAndSortingRequest<Order> {
         switch (field) {
             case "created":
                 return new OrderSpecifier<>(orderBy, order.createdAt);
-            case "status":
+            case "state":
                 return new OrderSpecifier<>(orderBy, order.state.label);
             case "client":
                 return new OrderSpecifier<>(orderBy, order.client.name);
+            case "price":
+                return new OrderSpecifier<>(orderBy, order.price);
+            case "shippingCountry":
+                return new OrderSpecifier<>(orderBy, order.shippingCountry.label);
             default:
                 return new OrderSpecifier<>(orderBy, order.id);
         }

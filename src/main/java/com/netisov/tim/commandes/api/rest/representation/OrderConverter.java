@@ -11,11 +11,13 @@ public class OrderConverter implements Function<Order, OrderRepresentation> {
     private final ClientConverter clientConverter;
     private final CountryConverter countryConverter;
     private final ArticleConverter articleConverter;
+    private final OrderStateConverter orderStateConverter;
 
-    public OrderConverter(ClientConverter clientConverter, CountryConverter countryConverter, ArticleConverter articleConverter) {
+    public OrderConverter(ClientConverter clientConverter, CountryConverter countryConverter, ArticleConverter articleConverter, OrderStateConverter orderStateConverter) {
         this.clientConverter = clientConverter;
         this.countryConverter = countryConverter;
         this.articleConverter = articleConverter;
+        this.orderStateConverter = orderStateConverter;
     }
 
     @Override
@@ -25,11 +27,7 @@ public class OrderConverter implements Function<Order, OrderRepresentation> {
                 .createdAt(order.getCreatedAt())
                 .price(order.getPrice())
                 .shippingCountry(countryConverter.apply(order.getShippingCountry()))
-                .state(OrderStateRepresentation.builder()
-                        .code(order.getState().getCode())
-                        .label(order.getState().getLabel())
-                        .outcome(order.getState().getOutcome().name())
-                        .build())
+                .state(orderStateConverter.apply(order.getState()))
                 .lines(order.getOrderLines()
                         .stream()
                         .map(l -> OrderLineRepresentation.builder()

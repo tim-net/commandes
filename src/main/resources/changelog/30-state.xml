@@ -13,7 +13,7 @@
             <column name="label" type="nvarchar(256)" remarks="Label">
                 <constraints nullable="false" unique="true"/>
             </column>
-            <column name="status" type="int" remarks="Status">
+            <column name="outcome" type="int" remarks="Status">
                 <constraints nullable="false"/>
             </column>
         </createTable>

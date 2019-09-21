@@ -1,0 +1,30 @@
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Filtre
+      </mat-panel-title>
+      <mat-panel-description>
+        Recherche parametree
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <mat-form-field>
+      <input matInput placeholder="De date" [matDatepicker]="picker" (focus)="picker.open()" readonly [(ngModel)]="fromCreatedAtFilter" (dateChange)="fromCreatedAtFilterChanged()">
+    </mat-form-field>
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+    <mat-form-field>
+      <input #clientNameInput matInput placeholder="Nom de client" [(ngModel)]="clientNameFilter">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Status</mat-label>
+      <mat-select [(ngModel)]="stateCodeFilter" (ngModelChange)="stateCodeFilterChanged()">
+        <mat-option *ngFor="let state of orderStates" [value]="state.code">
+          {{state.label}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-expansion-panel>
+</mat-accordion>

@@ -6,22 +6,25 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "order")
+@Table(name = "order_entity")
 @Getter
+@EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Order {
+public class Order implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @NotNull
+
     @Column(name = "created_at", updatable = false, insertable = false)
     private LocalDateTime createdAt;
 
@@ -56,15 +59,14 @@ public class Order {
     private Double price;
 
     @Builder
-    public Order(Client client, Country shippingCountry, OrderState state,  Double price) {
+    public Order(Client client, Country shippingCountry,  Double price, Long id) {
         Objects.requireNonNull(client);
         Objects.requireNonNull(shippingCountry);
-        Objects.requireNonNull(state);
         Objects.requireNonNull(price);
         this.client = client;
         this.shippingCountry = shippingCountry;
-        this.state = state;
         this.price = price;
+        this.id = id;
     }
 
 }

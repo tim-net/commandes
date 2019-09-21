@@ -1,0 +1,7 @@
+::ng-deep .mat-grid-tile .mat-figure {
+  display: block !important; /* or whichever you need */
+}
+::ng-deep .mat-table {
+  overflow-y: scroll;
+  height: 400px;
+}

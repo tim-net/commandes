@@ -1,35 +1,96 @@
-<div class="container">
-  <form>
+<mat-grid-list cols="2" rowHeight="2:1">
+  <mat-grid-tile colspan="2" rowspan="1">
+    <div class="container">
     <div class="card">
       <div class="card-body">
-        <h2 *ngIf="order?.id" class="card-title">{{order?.name}}</h2>
         <h2 *ngIf="order?.id == null" class="card-title">Create an order</h2>
         <div class="card-text">
-        <ul class="list-group list-group-flush">
-          <li *ngIf="order?.id" class="list-group-item">Number: {{order?.id}}</li>
-          <li *ngIf="order?.created" class="list-group-item">Created: {{order?.created | date }}</li>
-          <li *ngIf="order?.state" class="list-group-item">State: {{order?.state}}</li>
-        </ul>
+          <ul class="list-group list-group-flush">
+            <li *ngIf="order?.id" class="list-group-item">Number: {{order?.id}}</li>
+            <li *ngIf="order?.created" class="list-group-item">
+              Created: {{order?.created  | date: 'dd.MM.yyyy HH:mm:ss' }}</li>
+            <li *ngIf="order?.state" class="list-group-item">State: {{order?.state.label}}</li>
+          </ul>
         </div>
       </div>
     </div>
     <mat-form-field>
       <mat-label>Client</mat-label>
-      <mat-select>
-        <mat-option *ngFor="let client of clients" [value]="order.client">
+      <mat-select [ngModel]="(order?.client | async)">
+        <mat-option *ngFor="let client of clients" [value]="client">
           {{client.name}}
         </mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field>
       <mat-label>Shipping country</mat-label>
-      <mat-select>
-        <mat-option *ngFor="let country of countries" [value]="order.shippingCountry">
+      <mat-select [ngModel]="(order?.shippingCountry | async)">
+        <mat-option *ngFor="let country of countries" [value]="country">
           {{country.label}}
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <h3>Price <span class="badge badge-secondary">{{order?.price}}</span></h3>
+    <button mat-raised-button class="mat-primary" (click)="saveOrder()">Sauvegarder</button>
+    </div>
+  </mat-grid-tile>
+<mat-grid-tile>
 
-  </form>
-</div>
+  Liste de commandes:
+
+  <mat-table #tableOrderLines [dataSource]="dataSourceOrderLines" style="height: 270px">
+    <ng-container matColumnDef="article">
+      <mat-header-cell *matHeaderCellDef> Nom d'article</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.article.label}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="price">
+      <mat-header-cell *matHeaderCellDef> Prix</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.price}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="amount">
+      <mat-header-cell *matHeaderCellDef> Montant</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.amount}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="orderLinesDisplayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: orderLinesDisplayedColumns;"></mat-row>
+  </mat-table>
+  <h3>Total: <span class="badge badge-secondary">{{order?.price}}</span></h3>
+</mat-grid-tile>
+<mat-grid-tile>
+  <mat-table #tableArticles [dataSource]="dataSourceArticles">
+    <div class="spinner-container" *ngIf="dataSourceArticles.loading$ | async">
+      <mat-spinner></mat-spinner>
+    </div>
+    <ng-container matColumnDef="code">
+      <mat-header-cell *matHeaderCellDef> Code</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.code}} </mat-cell>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="label">
+      <mat-header-cell *matHeaderCellDef> Libelle</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.label}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="familyCode">
+      <mat-header-cell *matHeaderCellDef> Famille</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.family.code}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="price">
+      <mat-header-cell *matHeaderCellDef> Prix</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.price}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="articlesDisplayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: articlesDisplayedColumns;"
+             (click)="orderAddLine(row)"
+             [style.background]="orderLinesContains(row)  ? 'lightblue' : ''"></mat-row>
+  </mat-table>
+
+</mat-grid-tile>
+</mat-grid-list>
+
+<!--</div>-->

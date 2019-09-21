@@ -37,6 +37,7 @@ public class Client {
         Objects.requireNonNull(name);
         this.code = code;
         this.name = name;
+        this.id = id;
     }
 
 }
