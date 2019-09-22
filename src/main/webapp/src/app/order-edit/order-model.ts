@@ -1,12 +1,12 @@
-import {Article, Client, OrderOutcome} from "../shared/models";
+import {Article, Client, Country, OrderOutcome} from "../shared/models";
 
 export class OrderModel {
   id: number;
-  created: string;
+  createdAt: string;
   state: OrderState;
   lines: OrderLine[];
   price: number;
-  shippingCountry: string;
+  shippingCountry: Country;
   client: Client;
 }
 

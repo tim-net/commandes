@@ -1,0 +1,52 @@
+order_entity:
+  - id: 1
+    created_at: "2018-10-01 00:00:00"
+    client_id: 1
+    shipping_country_code: FR
+    state_code: NV
+    price: 50
+  - id: 2
+    created_at: "2019-10-01 00:00:00"
+    client_id: 1
+    shipping_country_code: FR
+    state_code: NV
+    price: 50
+  - id: 3
+    created_at: "2018-10-01 00:00:00"
+    client_id: 2
+    shipping_country_code: FR
+    state_code: NV
+    price: 100
+order_line:
+  - id: 1
+    order_id: 1
+    article_code: TSHT1
+    amount: 2
+    price: 50
+  - id: 2
+    order_id: 2
+    article_code: TSHT1
+    amount: 2
+    price: 50
+article:
+  - code: TSHT1
+    label: T-shirt 1
+    price: 25
+    family_code: VETE
+article_family:
+  - code: VETE
+    label: Vetements ete
+order_state:
+  - code: NV
+    label: Nouvelle
+    outcome: 0
+client:
+  - id: 1
+    name: Pimkin Bearritz
+    code: PMBEA
+  - id: 2
+    name: Pimkin Antibes
+    code: PMBANT
+country:
+  - code: FR
+    label: France

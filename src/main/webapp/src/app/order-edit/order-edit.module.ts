@@ -1,7 +1,7 @@
 import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {RouterModule} from "@angular/router";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {OrderEditComponent} from "./order-edit.component";
 import {OrderService} from "../shared/order.service";
 import {MatSelectModule} from "@angular/material/select";
@@ -11,6 +11,7 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatInputModule} from "@angular/material/input";
 import {MatButtonModule} from "@angular/material/button";
 import {MatGridListModule} from "@angular/material/grid-list";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
 
 @NgModule({
   imports: [
@@ -23,7 +24,9 @@ import {MatGridListModule} from "@angular/material/grid-list";
     MatProgressSpinnerModule,
     MatInputModule,
     MatButtonModule,
-    MatGridListModule
+    MatGridListModule,
+    ReactiveFormsModule,
+    MatSnackBarModule
   ],
   declarations: [
     OrderEditComponent

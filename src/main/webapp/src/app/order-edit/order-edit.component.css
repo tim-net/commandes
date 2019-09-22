@@ -3,5 +3,4 @@
 }
 ::ng-deep .mat-table {
   overflow-y: scroll;
-  height: 400px;
 }

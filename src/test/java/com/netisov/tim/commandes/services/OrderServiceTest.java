@@ -1,12 +1,10 @@
 package com.netisov.tim.commandes.services;
 
-import com.netisov.tim.commandes.api.rest.representation.OrderConverter;
 import com.netisov.tim.commandes.domain.*;
 import com.netisov.tim.commandes.repository.ArticleRepository;
 import com.netisov.tim.commandes.repository.OrderRepository;
 import com.netisov.tim.commandes.service.OrderService;
 import com.netisov.tim.commandes.service.OrderStateService;
-import com.sun.tools.javac.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +16,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
@@ -54,9 +51,8 @@ public class OrderServiceTest {
                         .code("FR")
                         .label("France")
                         .build())
-                .state(initialState)
                 .build();
-
+        order1.setState(initialState);
         ArticleFamily family1 = ArticleFamily.builder()
                 .code("VETE")
                 .label("Vetements ete")

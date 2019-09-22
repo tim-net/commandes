@@ -31,12 +31,12 @@
       <mat-cell *matCellDef="let order">{{order.price}}</mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns" [routerLink]="['/order/edit']"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns" [routerLink]="['/order/edit', row.id]"></mat-row>
 
   </mat-table>
   <mat-paginator [length]="dataSource?.ordersCount" [pageSize]="filter.size" [pageIndex]="filter.page"
                  [pageSizeOptions]="[3, 5, 10]"></mat-paginator>
   <div class="row">
-    <button mat-fab color="primary" routerLink="/order/new">Cree une commande</button>
+    <button mat-raised-button color="primary" routerLink="/order/new">Cree une commande</button>
   </div>
 </div>

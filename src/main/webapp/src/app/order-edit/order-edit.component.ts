@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {OrderLine, OrderModel} from "./order-model";
 import {OrderService} from "../shared/order.service";
 import {ActivatedRoute} from "@angular/router";
@@ -10,7 +10,10 @@ import {ArticleService} from "../shared/article.service";
 import {CollectionViewer, DataSource} from "@angular/cdk/collections";
 import {BehaviorSubject, Observable, of} from "rxjs";
 import {catchError, finalize} from "rxjs/operators";
-import {MatTable, MatTableDataSource} from "@angular/material/table";
+import {MatTable} from "@angular/material/table";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {validateLines} from "./utils";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 class ArticlesDataSource implements DataSource<Article> {
   private articlesSubject = new BehaviorSubject<Article[]>([]);
@@ -29,6 +32,7 @@ class ArticlesDataSource implements DataSource<Article> {
     this.articlesSubject.complete();
     this.loadingSubject.complete();
   }
+
   reset() {
     this.articlesSubject.next([]);
   }
@@ -66,7 +70,7 @@ class OrderLineDatasource implements DataSource<OrderLine> {
     if (this.order.lines.find(l => l.article.code == article.code)) {
       let orderLine = this.order.lines.find(l => l.article.code == article.code);
       orderLine.amount++;
-      orderLine.price+=article.price;
+      orderLine.price += article.price;
       this.order.price += article.price;
     } else {
       let orderLine1 = new OrderLine(null, article, article.price);
@@ -77,7 +81,8 @@ class OrderLineDatasource implements DataSource<OrderLine> {
   }
 
   public removeLine(line: OrderLine) {
-    this.order.lines = this.order.lines.filter(l => l.article.code == line.article.code);
+    this.order.price -= line.price;
+    this.order.lines = this.order.lines.filter(l => l.article.code != line.article.code);
     this.orderLineSubject.next(this.order.lines);
   }
 
@@ -89,8 +94,9 @@ class OrderLineDatasource implements DataSource<OrderLine> {
   styleUrls: ['./order-edit.component.css']
 })
 export class OrderEditComponent implements OnInit {
-  public order: OrderModel;
-  private _saveOrderStatus: SaveStatus;
+  order: OrderModel;
+  form: FormGroup;
+  loadPending: boolean = true;
   clients: Client[];
   countries: Country[];
 
@@ -99,6 +105,8 @@ export class OrderEditComponent implements OnInit {
               private countryService: CountryService,
               private articleService: ArticleService,
               private route: ActivatedRoute,
+              private _snackBar: MatSnackBar,
+              private formBuilder: FormBuilder,
               private location: Location) {
   }
 
@@ -120,20 +128,46 @@ export class OrderEditComponent implements OnInit {
     this.loadCountries();
   }
 
+  initForm() {
+    this.form = this.formBuilder.group({
+      client: [this.order.client, Validators.required],
+      shippingCountry: [this.order.shippingCountry, Validators.required],
+      lines: [this.order.lines, validateLines],
+      price: [this.order.price],
+      id: [this.order.id],
+      state: [this.order.state],
+      createdAt: []
+    });
+  }
+
+
   goBack(): void {
     this.location.back();
   }
 
-  saveOrder(): void {
-    this.service.save(this.order).subscribe(r => this.onSaveOrder(r));
+  onSubmit(): void {
+    this.order.client = this.form.value.client;
+    this.order.shippingCountry = this.form.value.shippingCountry;
+    this.form.patchValue(this.order);
+    this.service.save(this.form.value).subscribe(r => this.onSaveOrder(r));
   }
 
   onSaveOrder(result: boolean) {
+    let msg;
     if (result) {
-      this._saveOrderStatus = SaveStatus.SUCCESS;
+      msg = "Commande est sauvegardee";
     } else {
-      this._saveOrderStatus = SaveStatus.ERROR;
+      msg = "Un erreur s'est produit.Desole."
     }
+    this._snackBar.open(msg, null, {
+      duration: 15000,
+    });
+  }
+
+  compareByCodeFn: ((f1: any, f2: any) => boolean) | null = this.compareByCode;
+
+  compareByCode(f1: any, f2: any) {
+    return f1 && f2 && f1.code === f2.code;
   }
 
   private getOrder(): void {
@@ -141,14 +175,17 @@ export class OrderEditComponent implements OnInit {
     if (id) {
       this.service.find(id).subscribe(c => {
         this.order = c;
-        this.order.lines = c.lines.map(n => new OrderLine(n.id, n.article, n.price, n.amount));
+        this.initForm();
         this.createOrderLineDS();
+        this.loadPending = false;
       })
     } else {
       this.order = new OrderModel();
       this.order.price = 0.0;
       this.order.lines = [];
+      this.initForm();
       this.createOrderLineDS();
+      this.loadPending = false;
     }
   }
 
@@ -156,14 +193,10 @@ export class OrderEditComponent implements OnInit {
   createOrderLineDS() {
     this.dataSourceOrderLines = new OrderLineDatasource(this.order);
     this.dataSourceOrderLines.orderLines$.subscribe(value => {
-      if (value.length > 0) {
+      if (this.tableArticles && value && value.length > 0) {
         this.tableArticles.renderRows();
       }
     });
-  }
-
-  getSaveOrderStatus(): SaveStatus {
-    return this._saveOrderStatus;
   }
 
 
@@ -178,13 +211,18 @@ export class OrderEditComponent implements OnInit {
 
   orderAddLine(row: Article) {
     this.dataSourceOrderLines.addArticle(row);
+    this.form.controls['lines'].markAsTouched();
+    this.form.patchValue(this.order);
+  }
+
+  removeLine(row: OrderLine) {
+    this.dataSourceOrderLines.removeLine(row);
+    this.form.patchValue(this.order);
   }
 
   orderLinesContains(row: Article) {
     return this.order.lines.find(l => l.article.code == row.code) != undefined;
   }
+
 }
 
-export enum SaveStatus {
-  SUCCESS = "SUCCESS", ERROR = "ERROR"
-}

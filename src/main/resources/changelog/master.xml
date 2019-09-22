@@ -7,7 +7,6 @@
     <property name="now" value="now()" dbms="h2"/>
     <property name="now" value="date('now')" dbms="sqlite"/>
 
-    <include file="10-urls.xml" relativeToChangelogFile="true"/>
     <include file="10-country.xml" relativeToChangelogFile="true"/>
     <include file="11-load_default_countries.xml" relativeToChangelogFile="true"/>
     <include file="20-client.xml" relativeToChangelogFile="true"/>

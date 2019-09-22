@@ -1,96 +1,108 @@
-<mat-grid-list cols="2" rowHeight="2:1">
-  <mat-grid-tile colspan="2" rowspan="1">
-    <div class="container">
-    <div class="card">
-      <div class="card-body">
-        <h2 *ngIf="order?.id == null" class="card-title">Create an order</h2>
-        <div class="card-text">
-          <ul class="list-group list-group-flush">
-            <li *ngIf="order?.id" class="list-group-item">Number: {{order?.id}}</li>
-            <li *ngIf="order?.created" class="list-group-item">
-              Created: {{order?.created  | date: 'dd.MM.yyyy HH:mm:ss' }}</li>
-            <li *ngIf="order?.state" class="list-group-item">State: {{order?.state.label}}</li>
-          </ul>
+<mat-grid-list cols="2" rowHeight="3:1" *ngIf="loadPending == false">
+
+  <mat-grid-tile colspan="2" rowspan="1" >
+    <form [formGroup]="form" autocomplete="off" novalidate (ngSubmit)="form.valid && onSubmit()">
+      <div class="container">
+        <div class="card">
+          <div class="card-body">
+            <h2 *ngIf="order?.id == null" class="card-title">Creer une commande</h2>
+            <div class="card-text">
+              <ul class="list-group list-group-flush">
+                <li *ngIf="order?.id" class="list-group-item">Numero: {{order?.id}}</li>
+                <li *ngIf="order?.createdAt" class="list-group-item">
+                  Cree: {{order?.createdAt  | date: 'dd.MM.yyyy HH:mm:ss' }}</li>
+                <li *ngIf="order?.state" class="list-group-item">Status: {{order?.state.label}}</li>
+              </ul>
+            </div>
+          </div>
         </div>
+        <mat-form-field>
+          <mat-label>Client</mat-label>
+          <mat-select id="clientName" formControlName="client" [compareWith]="compareByCodeFn">
+            <mat-option *ngFor="let client of clients" [value]="client">
+              {{client.name}}
+            </mat-option>
+          </mat-select>
+          <mat-hint  align="end">Obligatoire*</mat-hint>
+          <mat-error *ngIf="form.controls.client.errors?.required && form.controls.client.touched">Client est
+            obligatoire
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Pays de livraison</mat-label>
+          <mat-select id="shippingCountry" formControlName="shippingCountry" [compareWith]="compareByCodeFn">
+            <mat-option *ngFor="let country of countries" [value]="country">
+              {{country.label}}
+            </mat-option>
+          </mat-select>
+          <mat-hint  align="end">Obligatoire*</mat-hint>
+          <mat-error *ngIf="form.controls.shippingCountry.errors?.required && form.controls.client.touched">Pays de livraison est
+            obligatoire
+          </mat-error>
+        </mat-form-field>
+        <button mat-raised-button class="mat-primary">Sauvegarder</button>
       </div>
-    </div>
-    <mat-form-field>
-      <mat-label>Client</mat-label>
-      <mat-select [ngModel]="(order?.client | async)">
-        <mat-option *ngFor="let client of clients" [value]="client">
-          {{client.name}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Shipping country</mat-label>
-      <mat-select [ngModel]="(order?.shippingCountry | async)">
-        <mat-option *ngFor="let country of countries" [value]="country">
-          {{country.label}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <button mat-raised-button class="mat-primary" (click)="saveOrder()">Sauvegarder</button>
-    </div>
+        <mat-error *ngIf="form.controls.lines.errors?.linesInValid">Commande ne peut pas etre sauvegarder sans aucune ligne de commande.
+        </mat-error>
+    </form>
   </mat-grid-tile>
-<mat-grid-tile>
+  <mat-grid-tile>
 
-  Liste de commandes:
+    Liste de commandes:
 
-  <mat-table #tableOrderLines [dataSource]="dataSourceOrderLines" style="height: 270px">
-    <ng-container matColumnDef="article">
-      <mat-header-cell *matHeaderCellDef> Nom d'article</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.article.label}} </mat-cell>
-    </ng-container>
+    <mat-table #tableOrderLines [dataSource]="dataSourceOrderLines" style="height: 200px">
+      <ng-container matColumnDef="article">
+        <mat-header-cell *matHeaderCellDef> Nom d'article</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.article.label}} </mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="price">
-      <mat-header-cell *matHeaderCellDef> Prix</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.price}} </mat-cell>
-    </ng-container>
+      <ng-container matColumnDef="price">
+        <mat-header-cell *matHeaderCellDef> Prix</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.price}} </mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="amount">
-      <mat-header-cell *matHeaderCellDef> Montant</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.amount}} </mat-cell>
-    </ng-container>
+      <ng-container matColumnDef="amount">
+        <mat-header-cell *matHeaderCellDef> Montant</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.amount}} </mat-cell>
+      </ng-container>
 
-    <mat-header-row *matHeaderRowDef="orderLinesDisplayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: orderLinesDisplayedColumns;"></mat-row>
-  </mat-table>
-  <h3>Total: <span class="badge badge-secondary">{{order?.price}}</span></h3>
-</mat-grid-tile>
-<mat-grid-tile>
-  <mat-table #tableArticles [dataSource]="dataSourceArticles">
-    <div class="spinner-container" *ngIf="dataSourceArticles.loading$ | async">
-      <mat-spinner></mat-spinner>
-    </div>
-    <ng-container matColumnDef="code">
-      <mat-header-cell *matHeaderCellDef> Code</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.code}} </mat-cell>
-    </ng-container>
+      <mat-header-row *matHeaderRowDef="orderLinesDisplayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: orderLinesDisplayedColumns;" (click)="removeLine(row)"></mat-row>
+    </mat-table>
+    <h3>Total: <span class="badge badge-secondary">{{order?.price}}</span></h3>
+  </mat-grid-tile>
+  <mat-grid-tile>
+    <mat-table #tableArticles [dataSource]="dataSourceArticles" style="height: 300px">
+      <div class="spinner-container" *ngIf="dataSourceArticles.loading$ | async">
+        <mat-spinner></mat-spinner>
+      </div>
+      <ng-container matColumnDef="code">
+        <mat-header-cell *matHeaderCellDef> Code</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.code}} </mat-cell>
+      </ng-container>
 
-    <!-- Name Column -->
-    <ng-container matColumnDef="label">
-      <mat-header-cell *matHeaderCellDef> Libelle</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.label}} </mat-cell>
-    </ng-container>
+      <!-- Name Column -->
+      <ng-container matColumnDef="label">
+        <mat-header-cell *matHeaderCellDef> Libelle</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.label}} </mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="familyCode">
-      <mat-header-cell *matHeaderCellDef> Famille</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.family.code}} </mat-cell>
-    </ng-container>
+      <ng-container matColumnDef="familyCode">
+        <mat-header-cell *matHeaderCellDef> Famille</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.family.code}} </mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="price">
-      <mat-header-cell *matHeaderCellDef> Prix</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.price}} </mat-cell>
-    </ng-container>
+      <ng-container matColumnDef="price">
+        <mat-header-cell *matHeaderCellDef> Prix</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.price}} </mat-cell>
+      </ng-container>
 
-    <mat-header-row *matHeaderRowDef="articlesDisplayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: articlesDisplayedColumns;"
-             (click)="orderAddLine(row)"
-             [style.background]="orderLinesContains(row)  ? 'lightblue' : ''"></mat-row>
-  </mat-table>
+      <mat-header-row *matHeaderRowDef="articlesDisplayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: articlesDisplayedColumns;"
+               (click)="orderAddLine(row)"
+               [style.background]="orderLinesContains(row)  ? 'lightblue' : ''"></mat-row>
+    </mat-table>
 
-</mat-grid-tile>
+  </mat-grid-tile>
 </mat-grid-list>
-
-<!--</div>-->
+<button mat-raised-button color="primary" type="button" (click)="goBack()">Aller a la page precedente</button>

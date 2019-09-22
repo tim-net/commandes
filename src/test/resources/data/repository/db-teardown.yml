@@ -1,0 +1,9 @@
+# list all database tables in order so they can be truncated
+# without causing any foreign key constraint violations
+order_entity:
+order_line:
+article:
+article_family:
+order_state:
+client:
+country:

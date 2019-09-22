@@ -23,6 +23,7 @@ public class OrderConverter implements Function<Order, OrderRepresentation> {
     @Override
     public OrderRepresentation apply(Order order) {
         return OrderRepresentation.builder()
+                .id(order.getId())
                 .client(clientConverter.apply(order.getClient()))
                 .createdAt(order.getCreatedAt())
                 .price(order.getPrice())
@@ -31,6 +32,7 @@ public class OrderConverter implements Function<Order, OrderRepresentation> {
                 .lines(order.getOrderLines()
                         .stream()
                         .map(l -> OrderLineRepresentation.builder()
+                                .id(l.getId())
                                 .amount(l.getAmount())
                                 .price(l.getPrice())
                                 .article(articleConverter.apply(l.getArticle()))

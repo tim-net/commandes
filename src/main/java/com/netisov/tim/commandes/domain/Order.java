@@ -49,7 +49,7 @@ public class Order implements Serializable {
 
 
     @Setter
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderLine> orderLines;
 
 

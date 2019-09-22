@@ -3,7 +3,6 @@ package com.netisov.tim.commandes.service;
 import com.netisov.tim.commandes.domain.Article;
 import com.netisov.tim.commandes.domain.Order;
 import com.netisov.tim.commandes.domain.OrderLine;
-import com.netisov.tim.commandes.domain.OrderState;
 import com.netisov.tim.commandes.dto.PagingAndSortingRequest;
 import com.netisov.tim.commandes.repository.ArticleRepository;
 import com.netisov.tim.commandes.repository.OrderRepository;

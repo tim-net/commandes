@@ -21,9 +21,6 @@
             <column name="order_id" type="int" remarks="Commande">
                 <constraints nullable="false" deleteCascade="true"/>
             </column>
-            <column name="state_code" type="char(10)" remarks="Commande status">
-                <constraints nullable="false" />
-            </column>
         </createTable>
         <!-- Si il y aura la necessite de chercher une ligne de commande par article on peut ajouter l'index par article_code       -->
         <createIndex tableName="order_line" indexName="ix_order_line_order">
