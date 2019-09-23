@@ -1,6 +1,6 @@
 # commandes
 The project front-end is using Angular, so please consider having node.js installed on your 
-computer https://nodejs.org/en/. Additionally, you have to have at least Java 10 installed 
+computer https://nodejs.org/en/. Additionally, you have to have at least Java 8 installed 
 on your computer. In order to launch the project, please type in command line sh gradlew bootRun 
 in Unix systems or gradlew.bat bootRun in Windows in the root folder of the project. 
 The web-ui URL is http://localhost:80. By default the list of orders is shown. 
