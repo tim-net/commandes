@@ -34,7 +34,6 @@ export class OrderListComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-// this.filter = this.filterComponent.filter;
     // reset the paginator after sorting
     this.sort.sortChange.subscribe(() => this.filter.page = 0);
 
@@ -47,7 +46,7 @@ export class OrderListComponent implements OnInit, AfterViewInit {
 
 
   private loadOrdersPage() {
-    this.filter.sort = this.sort.direction == 'asc' ? "+" : "-" + this.sort.active;
+    this.filter.sort = (this.sort.direction == 'asc' ? "" : "-") + this.sort.active;
     this.filter.page = this.paginator.pageIndex;
     this.filter.size = this.paginator.pageSize;
     this.dataSource.loadOrders(this.filter);
